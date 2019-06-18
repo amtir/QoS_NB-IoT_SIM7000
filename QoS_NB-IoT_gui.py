@@ -193,7 +193,7 @@ class Ui_mainWindQoSNBIoT(object):
     def retranslateUi(self, mainWindQoSNBIoT):
         _translate = QtCore.QCoreApplication.translate
         mainWindQoSNBIoT.setWindowTitle(_translate("mainWindQoSNBIoT", "DRINKOTEC"))
-        #mainWindQoSNBIoT.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
+        mainWindQoSNBIoT.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
         self.lbl_title.setText(_translate("mainWindQoSNBIoT", "QoS NB-IoT"))
         self.btn_Stop.setText(_translate("mainWindQoSNBIoT", "Stop"))
         self.btn_Start.setText(_translate("mainWindQoSNBIoT", "Start"))
