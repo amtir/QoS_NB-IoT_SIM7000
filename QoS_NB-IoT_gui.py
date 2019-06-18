@@ -16,6 +16,8 @@ import sys
 import threading
 import json
 from multiprocessing import Process, Pipe, Array, Value
+#import QOS_NB-IoT_rc 
+import QOS_NB_IoT_rc
 
 status_machine = Array('i', range(4))    # Status machine : [ {1 : started or running},  {2 : stopped}, {0 : not in any mode} ]
 
@@ -39,7 +41,7 @@ class Ui_mainWindQoSNBIoT(object):
         self.lbl_title.setAlignment(QtCore.Qt.AlignCenter)
         self.lbl_title.setObjectName("lbl_title")
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 360, 801, 91))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 330, 801, 71))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(50, 0, 50, 0)
@@ -173,6 +175,16 @@ class Ui_mainWindQoSNBIoT(object):
         self.progressBar.setInvertedAppearance(False)
         self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.progressBar.setObjectName("progressBar")
+        self.lbl_iconStatus = QtWidgets.QLabel(self.centralwidget)
+        self.lbl_iconStatus.setGeometry(QtCore.QRect(9, 424, 21, 21))
+        self.lbl_iconStatus.setStyleSheet("border-image: url(:/qos/iconfinder_circle_green_10280.png);\n"
+"border-image: url(:/qos/iconfinder_circle_red_10282.png);")
+        self.lbl_iconStatus.setText("")
+        self.lbl_iconStatus.setObjectName("lbl_iconStatus")
+        self.lbl_connecxionStatus = QtWidgets.QLabel(self.centralwidget)
+        self.lbl_connecxionStatus.setGeometry(QtCore.QRect(39, 419, 411, 31))
+        self.lbl_connecxionStatus.setStyleSheet("color: rgb(255, 255, 255);")
+        self.lbl_connecxionStatus.setObjectName("lbl_connecxionStatus")
         mainWindQoSNBIoT.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(mainWindQoSNBIoT)
@@ -181,6 +193,7 @@ class Ui_mainWindQoSNBIoT(object):
     def retranslateUi(self, mainWindQoSNBIoT):
         _translate = QtCore.QCoreApplication.translate
         mainWindQoSNBIoT.setWindowTitle(_translate("mainWindQoSNBIoT", "DRINKOTEC"))
+        #mainWindQoSNBIoT.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
         self.lbl_title.setText(_translate("mainWindQoSNBIoT", "QoS NB-IoT"))
         self.btn_Stop.setText(_translate("mainWindQoSNBIoT", "Stop"))
         self.btn_Start.setText(_translate("mainWindQoSNBIoT", "Start"))
@@ -191,6 +204,7 @@ class Ui_mainWindQoSNBIoT(object):
         self.lbl_atcsq.setText(_translate("mainWindQoSNBIoT", "00"))
         self.lbl_statusfield.setText(_translate("mainWindQoSNBIoT", "None"))
         self.progressBar.setFormat(_translate("mainWindQoSNBIoT", "%p%"))
+        self.lbl_connecxionStatus.setText(_translate("mainWindQoSNBIoT", "Not Connected"))
         
         self.btn_Start.clicked.connect(self.startQoS)
         self.btn_Stop.clicked.connect(self.stopQoS)
@@ -205,9 +219,15 @@ class Ui_mainWindQoSNBIoT(object):
     # Stop QoS
     def stopQoS(self): 
         # 
-        print("Stop QoS")
+        print("Stop QoS {}".format(status_machine[0]))
         if(status_machine[0] ==1):
             status_machine[0] = 0
+            self.lbl_statusfield.setText("None")
+            self.lbl_atcsq.setText("00")
+            self.progressBar.setProperty("value", 0)
+            self.lbl_connecxionStatus.setText( "Not Connected: Stopped.")
+            self.lbl_iconStatus.setStyleSheet("border-image: url(:/qos/iconfinder_circle_red_10282.png);")
+            
 
 
     # Get the Signal Strength
@@ -258,7 +278,7 @@ class Ui_mainWindQoSNBIoT(object):
 	    return strRtnMessg
 
     # Check the Card SIM Connection 
-    # Should be launched in a seperate thread
+    # Should be launched in a seperate thread. For now this should do the trick.
     def check_SIM_gprs(self):
 
        status_machine[0] = 1
@@ -271,46 +291,64 @@ class Ui_mainWindQoSNBIoT(object):
           self.ser.timeout =  2
           self.ser.flushOutput()
           #print(self.ser)
+          self.lbl_connecxionStatus.setText( "Connected.")
+          self.lbl_iconStatus.setStyleSheet("border-image: url(:/qos/iconfinder_circle_green_10280.png);")
    
        except Exception as e:
           print("Error : No Serial RS232.")
-          sys.exit(0)
+          self.lbl_connecxionStatus.setText( "Not Connected: Error.")
+          self.lbl_iconStatus.setStyleSheet("border-image: url(:/qos/iconfinder_circle_red_10282.png);")
+          status_machine[0] = 0
+          return 0
+          #sys.exit(0)
   
   
-       while(status_machine[0] ==1):
-          strRtnMess = self.get_Signal_Strength()
-          #QtCore.QCoreApplication.processEvents()
-          lst_rtn_mssg =  ((strRtnMess.split('\r\n'))[1]).split()[1].split(',')[0]
-          strDate = '{0:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
-          intStrengthSignal = int(lst_rtn_mssg)
-          if(intStrengthSignal <= 9):
-             print("{} CSQ:{} Marginal".format(strDate, intStrengthSignal))
-             self.lbl_atcsq.setText(lst_rtn_mssg)
-             self.lbl_statusfield.setText("Marginal")
-             self.progressBar.setProperty("value", intStrengthSignal)
-          elif(intStrengthSignal >=10 and intStrengthSignal <=14):
-             print("{} CSQ:{} OK".format(strDate, intStrengthSignal))
-             self.lbl_atcsq.setText(lst_rtn_mssg)
-             self.lbl_statusfield.setText("OK")
-             self.progressBar.setProperty("value", intStrengthSignal)
-          elif(intStrengthSignal >=15 and intStrengthSignal <= 19):
-             print("{} CSQ:{} Good".format(strDate, intStrengthSignal))
-             self.lbl_atcsq.setText(lst_rtn_mssg)
-             self.lbl_statusfield.setText("Good")
-             self.progressBar.setProperty("value", intStrengthSignal)
-          elif(intStrengthSignal >= 20 and intStrengthSignal <= 30):
-             print("{} CSQ:{} Excellent".format(strDate, intStrengthSignal))
-             self.lbl_atcsq.setText(lst_rtn_mssg)
-             self.lbl_statusfield.setText("Excellent")
-             self.progressBar.setProperty("value", intStrengthSignal)
+       try: 
+          while(status_machine[0] ==1):
+              strRtnMess = self.get_Signal_Strength()
+                  #QtCore.QCoreApplication.processEvents()
+              lst_rtn_mssg =  ((strRtnMess.split('\r\n'))[1]).split()[1].split(',')[0]
+              strDate = '{0:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
+              QtCore.QCoreApplication.processEvents()
+              intStrengthSignal = int(lst_rtn_mssg)
+              if(intStrengthSignal <= 9):
+                 #print("{} CSQ:{} Marginal".format(strDate, intStrengthSignal))
+                 self.lbl_atcsq.setText(lst_rtn_mssg)
+                 self.lbl_statusfield.setText("Marginal")
+                 self.progressBar.setProperty("value", intStrengthSignal)
+              elif(intStrengthSignal >=10 and intStrengthSignal <=14):
+                 #print("{} CSQ:{} OK".format(strDate, intStrengthSignal))
+                 self.lbl_atcsq.setText(lst_rtn_mssg)
+                 self.lbl_statusfield.setText("OK")
+                 self.progressBar.setProperty("value", intStrengthSignal)
+              elif(intStrengthSignal >=15 and intStrengthSignal <= 19):
+                 #print("{} CSQ:{} Good".format(strDate, intStrengthSignal))
+                 self.lbl_atcsq.setText(lst_rtn_mssg)
+                 self.lbl_statusfield.setText("Good")
+                 self.progressBar.setProperty("value", intStrengthSignal)
+              elif(intStrengthSignal >= 20 and intStrengthSignal <= 30):
+                 #print("{} CSQ:{} Excellent".format(strDate, intStrengthSignal))
+                 self.lbl_atcsq.setText(lst_rtn_mssg)
+                 self.lbl_statusfield.setText("Excellent")
+                 self.progressBar.setProperty("value", intStrengthSignal)
              
              
-          #print(lst_rtn_mssg)
-          QtCore.QCoreApplication.processEvents()
-          time.sleep(0.2)
-          QtCore.QCoreApplication.processEvents()
-  
+              #print(lst_rtn_mssg)
+              QtCore.QCoreApplication.processEvents()
+              time.sleep(0.1)
+              #QtCore.QCoreApplication.processEvents()
 
+       except Exception as e:
+          print("Error : Not Connected: Error Check the connection or power.")
+          self.lbl_connecxionStatus.setText( "Not Connected: Error.")
+          self.lbl_iconStatus.setStyleSheet("border-image: url(:/qos/iconfinder_circle_red_10282.png);")
+          self.lbl_statusfield.setText("None")
+          self.lbl_atcsq.setText("00")
+          self.progressBar.setProperty("value", 0)
+          status_machine[0] = 0
+          #return 0
+
+       QtCore.QCoreApplication.processEvents()
        self.ser.close()
 
 
