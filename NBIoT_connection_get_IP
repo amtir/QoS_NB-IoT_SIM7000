@@ -1,0 +1,191 @@
+
+
+
+OK
+AT+CSQ
++CSQ: 13,99
+
+OK
+AT+CREG?
++CREG: 0,0
+
+OK
+AT+CGATT?
++CGATT: 1
+
+OK
+AT+CGDCONT=1,"IP","shared.m2m.ch"
+OK
+AT+CSTT="shared.m2m.ch"
+OK
+AT+CIICR
+OK
+AT+CIFSR
+10.0.91.31
+AT+CIPSTART="UDP","18.217.31.126","80")
+ERROR
+AT+CIPSTART="UDP","18.217.31.126","80"
+OK
+
+CONNECT OK
+AT+CIPSEND=10
+> {"s":12.5}
+SEND OK
+{"s":12.5}AT+CIPSTART="UDP","18.217.31.126","80"
+ERROR
+
+ALREADY CONNECT
+AT+CIPSEND=10
+> {"s":12.5}
+SEND OK
+{"s":12.5}AT
+OK
+AT+CIPCLOSE
+CLOSE OK
+AT+CIPSTART="UDP","18.217.31.126","80")
+ERROR
+AT+CIFSR
+10.0.91.31
+AT+CIPSEND=10
+ERROR
+AT+CIPSTART="UDP","18.217.31.126","80")
+ERROR
+AT+CSQ
++CSQ: 13,99
+
+OK
+AT+CIFSR
+10.0.91.31
+AT
+OK
+AT+CIPSTART="UDP","18.217.31.126","80"
+OK
+
+CONNECT OK
+AT+CIPSEND=10
+> {"s":12.5}
+SEND OK
+{"s":12.5}AT
+OK
+AT+CIFSR
+10.0.91.31
+AT+CIPCLOSE
+CLOSE OK
+AT+CIFSR
+10.0.91.31
+AT+CIPSEND=10
+ERROR
+AT+CIPSTART="UDP","18.217.31.126","80"
+OK
+
+CONNECT OK
+AT+CIPSEND=10
+> {"s":12.5}
+SEND OK
+{"s":12.5}AT
+OK
+AT+CIPCLOSE
+CLOSE OK
+
+CTRL-A Z for help | 9600 8N1 | NOR | Minicom 2.7.1 | VT102 | Offline | ttyAMA0                                                                              
+
+
+
+
+
+
+
+
+
+
+###############################################################
+
+
+drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ sudo python3 nbiot_connect.py 
+Connected to Serial.
+
+AT+CSQ
++CSQ: 19,99
+
+OK
+
+
+AT+CREG?
++CREG: 0,0
+
+OK
+
+AT+CGATT?
++CGATT: 1
+
+OK
+
+AT+CGDCONT=1,"IP","shared.m2m.ch"
+OK
+
+AT+CSTT="shared.m2m.ch"
+OK
+
+AT+CIICR
+OK
+
+AT+CIFSR
+10.65.37.45
+
+drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ 
+drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ cat nbiot_connect.py 
+import serial
+import time
+
+def send_at_command(ser, command, timeout=2):
+    ser.write((command + '\r').encode())
+    time.sleep(timeout)
+    response = ser.read(ser.in_waiting).decode()
+    return response
+
+def main():
+    status_machine = [0]
+
+    try:
+        ser = serial.Serial("/dev/ttyAMA0")
+        ser.baudrate = 9600
+        ser.bytesize = serial.EIGHTBITS
+        ser.parity = serial.PARITY_NONE
+        ser.stopbits = serial.STOPBITS_ONE
+        ser.timeout = 2
+        ser.flushOutput()
+        
+        print("Connected to Serial.")
+        status_machine[0] = 1
+
+        # Initialize connection
+        print(send_at_command(ser, 'AT'))
+        print(send_at_command(ser, 'AT+CSQ'))
+        print(send_at_command(ser, 'AT+CREG?'))
+        print(send_at_command(ser, 'AT+CGATT?'))
+        print(send_at_command(ser, 'AT+CGDCONT=1,"IP","shared.m2m.ch"'))
+        print(send_at_command(ser, 'AT+CSTT="shared.m2m.ch"'))
+        print(send_at_command(ser, 'AT+CIICR'))
+        print(send_at_command(ser, 'AT+CIFSR'))
+
+        # Optionally, you can start a TCP connection and send data
+        # server_ip = "your_server_ip"
+        # port = "your_port"
+        # print(send_at_command(ser, f'AT+CIPSTART="TCP","{server_ip}","{port}"'))
+        # print(send_at_command(ser, 'AT+CIPSEND'))
+        # print(send_at_command(ser, 'your data here' + chr(26)))
+
+        ser.close()
+
+    except Exception as e:
+        print(f"Error: {e}")
+        print("Not Connected: Error.")
+        status_machine[0] = 0
+
+if __name__ == "__main__":
+    main()
+
+drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ 
+
+
+

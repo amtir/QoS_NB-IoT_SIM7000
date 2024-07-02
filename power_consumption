@@ -1,0 +1,44 @@
+
+
+
+Turbines : ~ 10 mA 
+
+Modem @Rest:	15 mA
+	  @Activity: 40 mA
+	  
+UC: 	30 mA (actif mode)
+		10UA  (sleep mode)
+
+Modem 
+------
+5s activity 
+ 40 mA during 5 seconds  
+ 0 mA 	during 3600 - 5 seconds 
+ AVG instant consumtion = 40 mA x 5s / 3600s = 0.06mA AVG
+ 
+
+Uc 
+ 30 mA during 10 seconds  
+ 10 UA 	during 3600 - 10 seconds 
+
+ 30mA x 10s /3600s = 0.083 mA AVG
+					10UA = 0.010 mA
+				Total = 0.093 ~ 0.1 mA 
+
+
+Total = 0.06mA + 0.1 mA  = 0.16 mA
+Pavg = 0.16 mA x 5 V = 0.00016 x5 = 0.0008 W
+
+19.8 Wh / 0.0008 = 24 750 Heures 
+
+(24750/24 h) /365jours = 2.82 Years
+
+
+---------------------
+
+
+5V x 10 mA = 5 x 0.01 = 0.05 W
+
+19.8 Wh
+
+time = 19.8 / 0.05 = ~ 396 ~400  Hours ~ 17 days

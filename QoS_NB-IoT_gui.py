@@ -283,7 +283,7 @@ class Ui_mainWindQoSNBIoT(object):
 
        status_machine[0] = 1
        try:
-          self.ser = serial.Serial("/dev/ttyUSB3")
+          self.ser = serial.Serial("/dev/ttyAMA0")
           self.ser.baudrate = 9600
           self.ser.bytesize = serial.EIGHTBITS
           self.ser.parity = serial.PARITY_NONE

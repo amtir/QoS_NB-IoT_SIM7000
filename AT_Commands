@@ -1,0 +1,79 @@
+
+
+
+drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ sudo minicom -D /dev/ttyAMA0 -b 9600
+
+
+Welcome to minicom 2.7.1
+
+OPTIONS: I18n 
+Compiled on Aug 13 2017, 15:25:34.
+Port /dev/ttyAMA0, 12:52:24
+
+Press CTRL-A Z for help on special keys
+
+AT
+OK
+
+AT+CGATT?
++CGATT: 1
+
+AT+CPSI?
++CPSI: LTE NB-IOT,Online,228-01,0x1068,18108107,182,EUTRAN-BAND20,6290,0,0,-12,-104,-92,9
+
+
+AT+CSTT?
++CSTT: "shared.m2m.ch","",""
+
+
+AT+CREG?
++CREG: 0,0
+
+
+AT+CIFSR
+10.0.253.242
+
+
+------------------------
+
+
+Checking modem connection...
+
+AT
+AT
+OK
+
+[+] Modem connection OK
+
+Signal Quality: 10,99
+AT+CGATT?
+AT+CGATT?
++CGATT: 1
+
+OK
+
+AT+CPSI?
+AT+CPSI?
++CPSI: LTE NB-IOT,Online,228-01,0x1068,18108107,182,EUTRAN-BAND20,6290,0,0,-20,-119,-94,4
+
+OK
+
+AT+CSTT?
+AT+CSTT?
++CSTT: "shared.m2m.ch","",""
+
+OK
+
+AT+CREG?
+AT+CREG?
++CREG: 0,0
+
+OK
+
+IP Address:  AT+CIFSR
+10.0.253.242
+
+
+
+
+
