@@ -1,7 +1,7 @@
 
 
 
-drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ sudo minicom -D /dev/ttyAMA0 -b 9600
+pi@raspberrypi:~/QoS_NB-IoT_SIM7000 $ sudo minicom -D /dev/ttyAMA0 -b 9600
 
 
 Welcome to minicom 2.7.1

@@ -1,6 +1,6 @@
 # QoS NB-IoT — SIM7000E Signal Quality Monitor
 
-Python tools to measure and report the **Quality of Signal (QoS)** of an **NB-IoT** connection using a **Waveshare SIM7000E NB-IoT HAT** on a Raspberry Pi. Built to qualify NB-IoT coverage at installation sites of connected IoT devices before deployment.
+Python tools to measure and report the **Quality of Signal (QoS)** of an **NB-IoT** connection using a **Waveshare SIM7000E NB-IoT HAT** on a Raspberry Pi. Built to check NB-IoT coverage at a site before deploying connected IoT devices there.
 
 <p align="center">
   <img src="photos/SIM7000E-NB-IoT-HAT.jpg" alt="Waveshare SIM7000E NB-IoT HAT" width="320">
@@ -16,6 +16,12 @@ Python tools to measure and report the **Quality of Signal (QoS)** of an **NB-Io
 - **Power control** of the SIM7000E via GPIO (power on / power off)
 - **Watchdog script** that restarts the GUI if it is not running
 
+## Screenshot
+
+<p align="center">
+  <img src="photos/2019-06-18-120319_1824x984_scrot.png" alt="QoS NB-IoT GUI" width="720">
+</p>
+
 ## Hardware
 
 | Component | Details |
@@ -25,48 +31,6 @@ Python tools to measure and report the **Quality of Signal (QoS)** of an **NB-Io
 | Interface | UART `/dev/ttyAMA0` (or USB `/dev/ttyUSB*`), 9600 baud |
 | Power key | GPIO 4 (BCM) |
 
-The modem manual and schematic are in [`NB-IoT_SIM7000_doc/`](NB-IoT_SIM7000_doc/).
-
-## Screenshot
-
-![QoS NB-IoT GUI](photos/2019-06-18-120345_1824x984_scrot.png)
-
-## Project Structure
-
-| File | Purpose |
-|------|---------|
-| `QoS_NB-IoT_gui.py` | PyQt5 GUI application (main app) |
-| `QOS_NB_IoT_rc.py` | Qt resources (icons) |
-| `qos_NB-IoT.py` | Command-line signal quality monitor |
-| `nbiot_connect.py` | Attach to the network and get an IP address |
-| `send_udp*.py`, `udp_signal_sender.py` | Send signal quality as JSON over UDP |
-| `connect_send_http.py`, `get_http_message.py` | Send / receive data over HTTP |
-| `set_systemtime_nbiot.py`, `settimezone_nbiot.py`, `get_utc-date-time.py` | Network time synchronization |
-| `sim7000e_power_control.py` | GPIO power control of the modem |
-| `run.sh`, `bashScriptQoSNB-IoT.sh` | Start-up and watchdog scripts |
-| `AT_Commands`, `NBIoT_connection_get_IP` | Reference AT command sessions |
-| `power_consumption` | Power budget notes |
-| `Manual_QoS_NB-IoT_06-2019.pdf` | User manual |
-
-## Getting Started
-
-```bash
-# Dependencies
-sudo apt install python3-pyqt5
-pip3 install pyserial RPi.GPIO
-
-# Power on the modem
-python3 sim7000e_power_control.py power_on
-
-# Command-line monitor
-python3 qos_NB-IoT.py
-
-# GUI
-python3 QoS_NB-IoT_gui.py
-```
-
-> Set the serial port and APN (default `shared.m2m.ch`) in the scripts to match your setup and SIM provider.
-
 ## Signal Quality Scale (CSQ)
 
 | CSQ | Rating |
@@ -75,6 +39,44 @@ python3 QoS_NB-IoT_gui.py
 | 10 – 14 | OK |
 | 15 – 19 | Good |
 | 20 – 30 | Excellent |
+
+## Repository Structure
+
+```
+.
+├── src/
+│   ├── QoS_NB-IoT_gui.py          # PyQt5 GUI application (main app)
+│   ├── QOS_NB_IoT_rc.py           # Qt resources (icons)
+│   ├── qos_NB-IoT.py              # Command-line signal monitor
+│   ├── nbiot_connect.py           # Network attach + IP address
+│   ├── send_udp.py, udp_signal_sender.py          # Signal quality → JSON over UDP
+│   ├── connect_send_http.py, get_http_message.py  # HTTP send / receive
+│   ├── set_systemtime_nbiot.py, settimezone_nbiot.py, get_utc-date-time.py  # Network time
+│   ├── sim7000e_power_control.py  # GPIO power on/off
+│   └── experiments/               # Earlier iterations of the UDP sender
+├── scripts/
+│   ├── run.sh                     # Start the UDP sender at boot
+│   └── bashScriptQoSNB-IoT.sh     # Watchdog: restart the GUI if it stopped
+├── docs/
+│   ├── SIM7000E-NB-IoT-HAT-Manual-EN.pdf, ...-Schematic.pdf
+│   └── notes/                     # AT-command sessions, power budget
+├── logs/nbiot.log                 # Sample run
+├── photos/                        # Hardware and GUI screenshots
+└── requirements.txt
+```
+
+## Getting Started
+
+```bash
+sudo apt install python3-pyqt5
+pip3 install -r requirements.txt
+
+python3 src/sim7000e_power_control.py power_on   # power on the modem
+python3 src/qos_NB-IoT.py                        # command-line monitor
+python3 src/QoS_NB-IoT_gui.py                    # GUI
+```
+
+> Set the serial port and APN (default `shared.m2m.ch`) in the scripts to match your setup and SIM provider. The UDP/HTTP scripts have the target server address in their `AT+CIPSTART` commands; change it to your own endpoint.
 
 ## Tech Stack
 

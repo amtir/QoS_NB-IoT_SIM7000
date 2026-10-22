@@ -8,7 +8,7 @@ sleep 1
 echo "`date`:  Script to ensure that the QoS NB-IoT Python program is running."
 
 
-strprocess='/home/pi/QOS/QoS_NB-IoT_gui.py'
+strprocess='/home/pi/QoS_NB-IoT_SIM7000/src/QoS_NB-IoT_gui.py'
 outp="$(ps aux | grep python | awk '{print $13}' | head -n1)"
 
 echo "${outp}"
@@ -19,8 +19,8 @@ if [ "$outp" = "$strprocess" ]; then
 	echo "==> ${outp} already running..." 
 else
 	echo "==> Restarting the process ..."
-	echo `sudo su pi -c "DISPLAY=:0.0 sudo /usr/bin/python3 /home/pi/QOS/QoS_NB-IoT_gui.py"`
-	#echo `sudo /usr/bin/python3 /home/pi/QOS/QoS_NB-IoT_gui.py`
+	echo `sudo su pi -c "DISPLAY=:0.0 sudo /usr/bin/python3 /home/pi/QoS_NB-IoT_SIM7000/src/QoS_NB-IoT_gui.py"`
+	#echo `sudo /usr/bin/python3 /home/pi/QoS_NB-IoT_SIM7000/src/QoS_NB-IoT_gui.py`
   
 
 fi 

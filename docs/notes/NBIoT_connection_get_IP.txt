@@ -101,7 +101,7 @@ CTRL-A Z for help | 9600 8N1 | NOR | Minicom 2.7.1 | VT102 | Offline | ttyAMA0
 ###############################################################
 
 
-drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ sudo python3 nbiot_connect.py 
+pi@raspberrypi:~/QoS_NB-IoT_SIM7000 $ sudo python3 nbiot_connect.py 
 Connected to Serial.
 
 AT+CSQ
@@ -132,8 +132,8 @@ OK
 AT+CIFSR
 10.65.37.45
 
-drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ 
-drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ cat nbiot_connect.py 
+pi@raspberrypi:~/QoS_NB-IoT_SIM7000 $ 
+pi@raspberrypi:~/QoS_NB-IoT_SIM7000 $ cat nbiot_connect.py 
 import serial
 import time
 
@@ -185,7 +185,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-drinkotec@dispenser1:~/QoS_NB-IoT_SIM7000 $ 
+pi@raspberrypi:~/QoS_NB-IoT_SIM7000 $ 
 
 
 
